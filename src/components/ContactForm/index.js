@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
+import isEmailValid from '../../utils/isEmailValid';
+
 import { ButtonContainer, Form } from './style';
 
 import { FormGroup } from '../FormGroup';
@@ -13,35 +15,76 @@ export function ContactForm({ buttonLabel }) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [category, setCategory] = useState('');
+  const [errors, setErrors] = useState([]);
+
+  const handleChangeName = (event) => {
+    setName(event.target.value);
+
+    if (!event.target.value) {
+      setErrors((prevState) => [
+        ...prevState,
+        { field: 'name', message: 'Nome é obrigatório' },
+      ]);
+    } else {
+      setErrors((prevState) => prevState.filter((error) => error.field !== 'name'));
+    }
+  };
+
+  const handleChangeEmail = (event) => {
+    setEmail(event.target.value);
+
+    if (event.target.value && !isEmailValid(event.target.value)) {
+      const errorAlreadyExists = errors.find((error) => error.field === 'email');
+
+      if (errorAlreadyExists) {
+        return;
+      }
+
+      setErrors((prevState) => [
+        ...prevState,
+        { field: 'email', message: 'E-mail inválido' },
+      ]);
+    } else {
+      setErrors((prevState) => prevState.filter((error) => error.field !== 'email'));
+    }
+  };
+
+  console.log(errors);
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     console.log({
-      name, email, phone, category,
+      name,
+      email,
+      phone,
+      category,
     });
   };
 
   return (
     <Form onSubmit={handleSubmit}>
       <FormGroup>
+        <Input placeholder="Nome" value={name} onChange={handleChangeName} />
+      </FormGroup>
+
+      <FormGroup>
+        <Input placeholder="Email" value={email} onChange={handleChangeEmail} />
+      </FormGroup>
+
+      <FormGroup>
         <Input
-          placeholder="Nome"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
+          placeholder="Telefone"
+          value={phone}
+          onChange={(event) => setPhone(event.target.value)}
         />
       </FormGroup>
 
-      <FormGroup error="E-mail inválido">
-        <Input placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
-      </FormGroup>
-
       <FormGroup>
-        <Input placeholder="Telefone" value={phone} onChange={(event) => setPhone(event.target.value)} />
-      </FormGroup>
-
-      <FormGroup>
-        <Select value={category} onChange={(event) => setCategory(event.target.value)}>
+        <Select
+          value={category}
+          onChange={(event) => setCategory(event.target.value)}
+        >
           <option value="instagram">Instagram</option>
           <option value="instagram">Linkedin</option>
           <option value="instagram">Github</option>
