@@ -34,7 +34,9 @@ export function ContactForm({ buttonLabel }) {
     setEmail(event.target.value);
 
     if (event.target.value && !isEmailValid(event.target.value)) {
-      const errorAlreadyExists = errors.find((error) => error.field === 'email');
+      const errorAlreadyExists = errors.find(
+        (error) => error.field === 'email',
+      );
 
       if (errorAlreadyExists) {
         return;
@@ -49,7 +51,8 @@ export function ContactForm({ buttonLabel }) {
     }
   };
 
-  console.log(errors);
+  // eslint-disable-next-line max-len
+  const getErrorMessageByFieldName = (fieldName) => errors.find((error) => error.field === fieldName)?.message;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -64,12 +67,22 @@ export function ContactForm({ buttonLabel }) {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <FormGroup>
-        <Input placeholder="Nome" value={name} onChange={handleChangeName} />
+      <FormGroup error={getErrorMessageByFieldName('name')}>
+        <Input
+          placeholder="Nome"
+          value={name}
+          onChange={handleChangeName}
+          error={getErrorMessageByFieldName('name')}
+        />
       </FormGroup>
 
-      <FormGroup>
-        <Input placeholder="Email" value={email} onChange={handleChangeEmail} />
+      <FormGroup error={getErrorMessageByFieldName('email')}>
+        <Input
+          placeholder="Email"
+          value={email}
+          onChange={handleChangeEmail}
+          error={getErrorMessageByFieldName('email')}
+        />
       </FormGroup>
 
       <FormGroup>
