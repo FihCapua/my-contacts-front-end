@@ -11,6 +11,7 @@ export default styled.select`
   padding: 0 16px;
   outline: none;
   transition: border-color 0.2s ease-in;
+  appearance: none;
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.primary.main}
