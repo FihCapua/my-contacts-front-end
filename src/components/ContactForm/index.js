@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import isEmailValid from '../../utils/isEmailValid';
+import formatPhone from '../../utils/formatPhone';
 
 import { ButtonContainer, Form } from './style';
 
@@ -39,15 +40,19 @@ export function ContactForm({ buttonLabel }) {
     }
   };
 
+  const handleChangePhone = (event) => {
+    setPhone(formatPhone(event.target.value));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    console.log({
+    console.log(
       name,
       email,
-      phone,
+      phone.replace(/\D/g, ''),
       category,
-    });
+    );
   };
 
   return (
@@ -75,7 +80,8 @@ export function ContactForm({ buttonLabel }) {
         <Input
           placeholder="Telefone"
           value={phone}
-          onChange={(event) => setPhone(event.target.value)}
+          maxLength={15}
+          onChange={handleChangePhone}
         />
       </FormGroup>
 
@@ -85,8 +91,8 @@ export function ContactForm({ buttonLabel }) {
           onChange={(event) => setCategory(event.target.value)}
         >
           <option value="instagram">Instagram</option>
-          <option value="instagram">Linkedin</option>
-          <option value="instagram">Github</option>
+          <option value="linkedin">Linkedin</option>
+          <option value="github">Github</option>
         </Select>
       </FormGroup>
 
