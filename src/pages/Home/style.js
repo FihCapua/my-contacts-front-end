@@ -94,7 +94,8 @@ export const Card = styled.div`
         color: ${({ theme }) => theme.colors.primary.main};
         font-weight: bold;
         text-transform: uppercase;
-        padding: 4px;
+        font-size: 7px;
+        padding: 5px;
         border-radius: 4px;
         margin-left: 8px;
       }
