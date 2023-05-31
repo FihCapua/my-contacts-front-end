@@ -15,6 +15,11 @@ import trash from '../../assets/images/icons/trash.svg';
 export function Home() {
   const [contacts, setContacts] = useState([]);
   const [orderBy, setOrderBy] = useState('asc');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredSearchTheme = contacts.filter((contact) => (
+    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+  ));
 
   useEffect(() => {
     fetch(`http://localhost:3001/contacts?orderBy=${orderBy}`)
@@ -28,39 +33,47 @@ export function Home() {
   }, [orderBy]);
 
   const handleToggleOrder = () => {
-    setOrderBy(
-      (prevState) => (prevState === 'asc' ? 'desc' : 'asc'),
-    );
+    setOrderBy((prevState) => (prevState === 'asc' ? 'desc' : 'asc'));
+  };
+
+  const handleSearchTerm = (event) => {
+    setSearchTerm(event.target.value);
   };
 
   return (
     <Container>
       <InputSearchContainer>
-        <input type="text" placeholder="Pesquisar pelo nome..." />
+        <input
+          value={searchTerm}
+          type="text"
+          placeholder="Pesquisar pelo nome..."
+          onChange={handleSearchTerm}
+        />
       </InputSearchContainer>
 
       <Header>
         <strong>
-          {contacts.length}
-          {contacts.length === 1 ? ' contato' : ' contatos'}
+          {filteredSearchTheme.length}
+          {filteredSearchTheme.length === 1 ? ' contato' : ' contatos'}
         </strong>
         <Link to="/new-contact">Novo Contato</Link>
       </Header>
 
-      <ListHeader orderBy={orderBy}>
-        <button type="button" onClick={handleToggleOrder}>
-          Nome
-          <img src={arrow} alt="Arrow Icon" />
-        </button>
-      </ListHeader>
+      {filteredSearchTheme.length > 0 && (
+        <ListHeader orderBy={orderBy}>
+          <button type="button" onClick={handleToggleOrder}>
+            Nome
+            <img src={arrow} alt="Arrow Icon" />
+          </button>
+        </ListHeader>
+      )}
 
-      {contacts.map((contact) => (
+      {filteredSearchTheme.map((contact) => (
         <Card key={contact.id}>
-          {console.log(contact)}
           <div className="info">
             <div className="contact-name">
               <strong>{contact.name}</strong>
-              {contact.category_name && <small>{contact.category_name}</small> }
+              {contact.category_name && <small>{contact.category_name}</small>}
             </div>
             <span>{contact.email}</span>
             <span>
