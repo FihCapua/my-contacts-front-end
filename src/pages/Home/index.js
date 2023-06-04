@@ -25,18 +25,20 @@ export function Home() {
   )), [contacts, searchTerm]);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetch(`http://localhost:3001/contacts?orderBy=${orderBy}`)
-      .then(async (response) => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`http://localhost:3001/contacts?orderBy=${orderBy}`);
         const json = await response.json();
         setContacts(json);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
+      } catch (error) {
+        console.log(error);
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, [orderBy]);
 
   console.log('renderizei');
@@ -70,7 +72,7 @@ export function Home() {
       </Header>
 
       {filteredSearchTheme.length > 0 && (
-        <ListHeader orderBy={orderBy}>
+        <ListHeader orderby={orderBy}>
           <button type="button" onClick={handleToggleOrder}>
             Nome
             <img src={arrow} alt="Arrow Icon" />
