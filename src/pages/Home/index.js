@@ -12,6 +12,7 @@ import arrow from '../../assets/images/icons/arrow.svg';
 import edit from '../../assets/images/icons/edit.svg';
 import trash from '../../assets/images/icons/trash.svg';
 import { Loader } from '../../components/Loader';
+import ContactsService from '../../services/ContactsService';
 
 export function Home() {
   const [contacts, setContacts] = useState([]);
@@ -28,9 +29,8 @@ export function Home() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`http://localhost:3001/contacts?orderBy=${orderBy}`);
-        const json = await response.json();
-        setContacts(json);
+        const contactsList = await ContactsService.listContacts(orderBy);
+        setContacts(contactsList);
       } catch (error) {
         console.log(error);
       } finally {
@@ -40,8 +40,6 @@ export function Home() {
 
     fetchData();
   }, [orderBy]);
-
-  console.log('renderizei');
 
   const handleToggleOrder = () => {
     setOrderBy((prevState) => (prevState === 'asc' ? 'desc' : 'asc'));
