@@ -6,12 +6,16 @@ import {
   InputSearchContainer,
   Header,
   ListHeader,
+  ErrorContainer,
 } from './style';
 
 import arrow from '../../assets/images/icons/arrow.svg';
 import edit from '../../assets/images/icons/edit.svg';
 import trash from '../../assets/images/icons/trash.svg';
+import sad from '../../assets/images/sad.svg';
+
 import { Loader } from '../../components/Loader';
+import Button from '../../components/Button';
 import ContactsService from '../../services/ContactsService';
 
 export function Home() {
@@ -19,6 +23,7 @@ export function Home() {
   const [orderBy, setOrderBy] = useState('asc');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   // eslint-disable-next-line max-len
   const filteredSearchTheme = useMemo(() => contacts.filter((contact) => (
@@ -34,6 +39,7 @@ export function Home() {
         setContacts(contactsList);
       } catch (error) {
         console.error(error);
+        setHasError(true);
       } finally {
         setIsLoading(false);
       }
@@ -62,13 +68,25 @@ export function Home() {
         />
       </InputSearchContainer>
 
-      <Header>
-        <strong>
-          {filteredSearchTheme.length}
-          {filteredSearchTheme.length === 1 ? ' contato' : ' contatos'}
-        </strong>
+      <Header hasError={hasError}>
+        {!hasError && (
+          <strong>
+            {filteredSearchTheme.length}
+            {filteredSearchTheme.length === 1 ? ' contato' : ' contatos'}
+          </strong>
+        )}
         <Link to="/new-contact">Novo Contato</Link>
       </Header>
+
+      {hasError && (
+      <ErrorContainer>
+        <img src={sad} alt="sad" />
+        <div className="details">
+          <strong>Ocorreu um erro ao obter seus contatos!</strong>
+          <Button type="button">Tentar novamente</Button>
+        </div>
+      </ErrorContainer>
+      )}
 
       {filteredSearchTheme.length > 0 && (
         <ListHeader orderby={orderBy}>
