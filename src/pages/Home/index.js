@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 import {
   Card,
@@ -30,7 +32,7 @@ export function Home() {
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
   )), [contacts, searchTerm]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
       const contactsList = await ContactsService.listContacts(orderBy);
@@ -43,11 +45,11 @@ export function Home() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [orderBy]);
 
   useEffect(() => {
     fetchData();
-  }, [orderBy]);
+  }, [fetchData]);
 
   const handleToggleOrder = () => {
     setOrderBy((prevState) => (prevState === 'asc' ? 'desc' : 'asc'));
@@ -73,7 +75,7 @@ export function Home() {
         />
       </InputSearchContainer>
 
-      <Header hasError={hasError}>
+      <Header haserror={hasError.toString()}>
         {!hasError && (
           <strong>
             {filteredSearchTheme.length}
