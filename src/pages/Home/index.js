@@ -30,21 +30,22 @@ export function Home() {
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
   )), [contacts, searchTerm]);
 
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const contactsList = await ContactsService.listContacts(orderBy);
+
+      setHasError(false);
+      setContacts(contactsList);
+    } catch (error) {
+      console.error(error);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const contactsList = await ContactsService.listContacts(orderBy);
-
-        setContacts(contactsList);
-      } catch (error) {
-        console.error(error);
-        setHasError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, [orderBy]);
 
@@ -54,6 +55,10 @@ export function Home() {
 
   const handleSearchTerm = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleTryAgain = () => {
+    fetchData();
   };
 
   return (
@@ -83,46 +88,50 @@ export function Home() {
         <img src={sad} alt="sad" />
         <div className="details">
           <strong>Ocorreu um erro ao obter seus contatos!</strong>
-          <Button type="button">Tentar novamente</Button>
+          <Button type="button" onClick={handleTryAgain}>Tentar novamente</Button>
         </div>
       </ErrorContainer>
       )}
 
-      {filteredSearchTheme.length > 0 && (
-        <ListHeader orderby={orderBy}>
-          <button type="button" onClick={handleToggleOrder}>
-            Nome
-            <img src={arrow} alt="Arrow Icon" />
-          </button>
-        </ListHeader>
-      )}
-
-      {filteredSearchTheme.map((contact) => (
-        <Card key={contact.id}>
-          <div className="info">
-            <div className="contact-name">
-              <strong>{contact.name}</strong>
-              {contact.category_name && <small>{contact.category_name}</small>}
-            </div>
-            <span>{contact.email}</span>
-            <span>
-              (11)
-              {' '}
-              {contact.phone}
-            </span>
-          </div>
-
-          <div className="actions">
-            <Link to={`/edit-contact/${contact.id}`}>
-              <img src={edit} alt="Edit" />
-            </Link>
-
-            <button type="button">
-              <img src={trash} alt="Delete" />
+      {!hasError && (
+        <>
+          {filteredSearchTheme.length > 0 && (
+          <ListHeader orderby={orderBy}>
+            <button type="button" onClick={handleToggleOrder}>
+              Nome
+              <img src={arrow} alt="Arrow Icon" />
             </button>
-          </div>
-        </Card>
-      ))}
+          </ListHeader>
+          )}
+
+          {filteredSearchTheme.map((contact) => (
+            <Card key={contact.id}>
+              <div className="info">
+                <div className="contact-name">
+                  <strong>{contact.name}</strong>
+                  {contact.category_name && <small>{contact.category_name}</small>}
+                </div>
+                <span>{contact.email}</span>
+                <span>
+                  (11)
+                  {' '}
+                  {contact.phone}
+                </span>
+              </div>
+
+              <div className="actions">
+                <Link to={`/edit-contact/${contact.id}`}>
+                  <img src={edit} alt="Edit" />
+                </Link>
+
+                <button type="button">
+                  <img src={trash} alt="Delete" />
+                </button>
+              </div>
+            </Card>
+          ))}
+        </>
+      )}
     </Container>
   );
 }
